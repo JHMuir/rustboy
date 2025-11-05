@@ -10,13 +10,14 @@ pub enum Instructions {
     CP(RegisterTarget),    // SUB except the value is not stored back in A register
     INC(RegisterTarget),   // Increment a specific register by 1
     DEC(RegisterTarget),   // Decrement a specific register by 1
-    CCF(RegisterTarget),   // Toggle the carry flag
-    SCF(RegisterTarget),   // Set carry flag to true
-    RRA(RegisterTarget),   // Bit rotate A register right through the carry flag
-    RLA(RegisterTarget),   // Bit rotate A register left through the carry flag
-    RRCA(RegisterTarget),  // Bit rotate A register right 
-    RRLA(RegisterTarget),  // Bit rotate A register left
-    CPL(RegisterTarget),   // Toggle every bit of A register
+    CCF,                   // Toggle the carry flag
+    SCF,                   // Set carry flag to true
+    RRA,                   // Bit rotate A register right through the carry flag
+    RLA,                   // Bit rotate A register left through the carry flag
+    RRCA,                  // Bit rotate A register right 
+    RRLA,                  // Bit rotate A register left
+    CPL,                   // Toggle every bit of A register
+    DAA,
     BIT(RegisterTarget),   // Test to see if a specific bit of a register is set
     RESET(RegisterTarget), // Set a specific bit of a register to 0
     SET(RegisterTarget),   // Set a specific bit of a register to 1

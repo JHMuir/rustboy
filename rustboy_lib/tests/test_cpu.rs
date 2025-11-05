@@ -8,7 +8,6 @@ use rustboy_lib::cpu::{
 #[cfg(test)]
 mod cpu_tests {
     use super::*;
-
     fn use_test_cpu() -> CPU{
         return CPU {
             registers: Registers {
@@ -29,7 +28,6 @@ mod cpu_tests {
             // pc: 1,
         }
     }
-
     fn check_flags_register(cpu_flags: FlagsRegister, compare_flags: FlagsRegister) {
         assert_eq!(cpu_flags.zero, compare_flags.zero);
         assert_eq!(cpu_flags.subtract, compare_flags.subtract);
@@ -39,7 +37,6 @@ mod cpu_tests {
         assert_eq!(u8::from(cpu_flags), u8::from(compare_flags));
 
     }
-
     #[test]
     fn test_add() {
         let mut cpu = use_test_cpu();
@@ -132,5 +129,52 @@ mod cpu_tests {
         cpu.execute(Instructions::DEC(RegisterTarget::L));
         assert_eq!(cpu.registers.l, 6);
         check_flags_register(cpu.registers.f, FlagsRegister{zero:false, subtract:true, carry:false, half_carry:false});
+    }
+    #[test]
+    fn test_ccf() {
+        let mut cpu = use_test_cpu();
+        cpu.execute(Instructions::CCF);
+        check_flags_register(cpu.registers.f, FlagsRegister{zero: false, subtract:false, carry: true, half_carry:false});
+    }
+    #[test]
+    fn test_scf() {
+        let mut cpu = use_test_cpu();
+        cpu.execute(Instructions::SCF);
+        check_flags_register(cpu.registers.f, FlagsRegister{zero:false, subtract:false, carry:true, half_carry:false});
+    }
+    #[test]
+    fn test_rra() {
+        let mut cpu = use_test_cpu();
+        cpu.execute(Instructions::RRA);
+        assert_eq!(cpu.registers.a, 0);
+        check_flags_register(cpu.registers.f, FlagsRegister { zero:false, subtract:false, half_carry:false, carry:true});
+    }
+    #[test]
+    fn test_rla() {
+        let mut cpu = use_test_cpu();
+        cpu.execute(Instructions::RLA);
+        assert_eq!(cpu.registers.a, 2);
+        check_flags_register(cpu.registers.f, FlagsRegister { zero:false, subtract:false, half_carry:false, carry:false})
+    }
+    #[test]
+    fn test_rrca() {
+        let mut cpu = use_test_cpu();
+        cpu.execute(Instructions::RRCA);
+        assert_eq!(cpu.registers.a, 128);
+        check_flags_register(cpu.registers.f, FlagsRegister { zero:false, subtract:false, half_carry:false, carry:true});
+    }
+    #[test]
+    fn test_rrla() {
+        let mut cpu = use_test_cpu();
+        cpu.execute(Instructions::RRLA);
+        assert_eq!(cpu.registers.a, 2);
+        check_flags_register(cpu.registers.f, FlagsRegister{zero:false, subtract:false, carry:false, half_carry:false});
+    }
+    #[test]
+    fn test_cpl() {
+        let mut cpu = use_test_cpu();
+        cpu.execute(Instructions::CPL);
+        assert_eq!(cpu.registers.a, 254);
+        check_flags_register(cpu.registers.f, FlagsRegister { zero:false, subtract:true, half_carry:true, carry:false });
     }
 }
