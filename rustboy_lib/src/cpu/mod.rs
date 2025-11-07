@@ -228,6 +228,22 @@ impl CPU {
                     true);
                 self.set_target_register(RegisterTarget::A, new_value);
             }
+            Instructions::BIT(target, bit_pos) => {
+                let register_value = self.get_target_register(&target);
+                let bit_pos: u8 = bit_pos.into();
+                let result = (register_value >> bit_pos) & 0b1;
+                self.set_flags_register(
+                    result == 0, 
+                    false, 
+                    self.registers.f.carry, 
+                true
+                );
+            }
+            Instructions::RESET(target, bit_pos) => {
+                let register_value = self.get_target_register(&target);
+                let bit_pos: u8 = bit_pos.into();
+                self.set_target_register(target, register_value & !(1 << bit_pos));
+            }
 
             _ => {
                 println!("Other instructions coming soon...")

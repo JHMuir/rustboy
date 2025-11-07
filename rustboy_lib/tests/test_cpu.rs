@@ -1,6 +1,6 @@
 use rustboy_lib::cpu::{
     registers::{Registers, FlagsRegister}, 
-    instructions::{Instructions, RegisterTarget, VirtualRegisterTarget},
+    instructions::{Instructions, RegisterTarget, VirtualRegisterTarget, BitPosition},
     CPU
 };
 
@@ -176,5 +176,19 @@ mod cpu_tests {
         cpu.execute(Instructions::CPL);
         assert_eq!(cpu.registers.a, 254);
         check_flags_register(cpu.registers.f, FlagsRegister { zero:false, subtract:true, half_carry:true, carry:false });
+    }
+    #[test]
+    fn test_bit() {
+        let mut cpu = use_test_cpu();
+        cpu.execute(Instructions::BIT(RegisterTarget::D, BitPosition::B3));
+        assert_eq!(cpu.registers.d, 4);
+        check_flags_register(cpu.registers.f, FlagsRegister { zero:true, subtract:false, half_carry:true, carry: false});
+    }
+    #[test]
+    fn test_reset() {
+        let mut cpu = use_test_cpu();
+        cpu.execute(Instructions::RESET(RegisterTarget::H, BitPosition::B3));
+        assert_eq!(cpu.registers.h, 6);
+        check_flags_register(cpu.registers.f, FlagsRegister{zero:false, subtract: false, half_carry:false, carry:false});
     }
 }

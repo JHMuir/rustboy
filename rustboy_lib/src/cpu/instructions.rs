@@ -18,8 +18,8 @@ pub enum Instructions {
     RRLA,                  // Bit rotate A register left
     CPL,                   // Toggle every bit of A register
     DAA,
-    BIT(RegisterTarget),   // Test to see if a specific bit of a register is set
-    RESET(RegisterTarget), // Set a specific bit of a register to 0
+    BIT(RegisterTarget, BitPosition),   // Test to see if a specific bit of a register is set
+    RESET(RegisterTarget, BitPosition), // Set a specific bit of a register to 0
     SET(RegisterTarget),   // Set a specific bit of a register to 1
     SRL(RegisterTarget),   // Bit shift a specific register right by 1
     RR(RegisterTarget),    // Bit rotate a specific register right by 1 through the carry flag
@@ -37,4 +37,22 @@ pub enum RegisterTarget {
 
 pub enum VirtualRegisterTarget {
     BC, DE, HL, SP,
+}
+
+pub enum BitPosition {
+    B0, B1, B2, B3, B4, B5, B6, B7
+}
+impl std::convert::From<BitPosition> for u8 {
+    fn from(position: BitPosition) -> u8 {
+        match position {
+            BitPosition::B0 => 0,
+            BitPosition::B1 => 1,
+            BitPosition::B2 => 2,
+            BitPosition::B3 => 3,
+            BitPosition::B4 => 4,
+            BitPosition::B5 => 5,
+            BitPosition::B6 => 6,
+            BitPosition::B7 => 7,
+        }
+    }
 }
