@@ -244,7 +244,92 @@ impl CPU {
                 let bit_pos: u8 = bit_pos.into();
                 self.set_target_register(target, register_value & !(1 << bit_pos));
             }
-
+            Instructions::SET(target, bit_pos) => {
+                let register_value = self.get_target_register(&target);
+                let bit_pos: u8 = bit_pos.into();
+                self.set_target_register(target, register_value & (1 << bit_pos));
+            }
+            Instructions::SRL(target) => {
+                let register_value = self.get_target_register(&target);
+                let result = register_value >> 1;
+                self.set_target_register(target, result);
+                self.set_flags_register(
+                    result == 0, 
+                    false, 
+                    register_value & 0b1 == 0b1, 
+                false);
+            }
+            Instructions::RR(target) => {
+                let register_value = self.get_target_register(&target);
+                let carry_bit = if self.registers.f.carry { 1 } else { 0 } << 7;
+                let result = carry_bit | (register_value >> 1);
+                self.set_flags_register(
+                    result == 0,
+                    false,
+                    register_value & 0b1 == 0b1,
+                    false,
+                );
+                self.set_target_register(target, result);
+                
+            }
+            Instructions::RL(target) => {
+                let register_value = self.get_target_register(&target);
+                let carry_bit = if self.registers.f.carry { 1 } else { 0 } << 7;
+                let result = (register_value << 1) | carry_bit;
+                self.set_flags_register(
+                    result == 0,
+                    false,
+                    (register_value & 0x80) == 0x80,
+                    false,
+                );
+                self.set_target_register(target, result);
+            }
+            Instructions::RRC(target) => {
+                let register_value = self.get_target_register(&target);
+                let result = register_value.rotate_right(1);
+                self.set_flags_register(
+                    result == 0,
+                    false,
+                    register_value & 0b1 == 0b1,
+                    false,
+                );
+                self.set_target_register(target, result);
+            }
+            Instructions::RLC(target) => {
+                let register_value = self.get_target_register(&target);
+                let carry = (register_value & 0x80) >> 7;
+                let result = register_value.rotate_left(1) | carry;
+                self.set_flags_register(
+                    result == 0,
+                    false,
+                    register_value & 0b1 == 0b1,
+                    false,
+                );
+                self.set_target_register(target, result);
+            }
+            Instructions::SRA(target) => {
+                let register_value = self.get_target_register(&target);
+                let msb = register_value & 0x80;
+                let result = msb | (register_value >> 1);
+                self.set_flags_register(
+                    result == 0,
+                    false,
+                    register_value & 0b1 == 0b1,
+                    false,
+                );
+                self.set_target_register(target, result);
+            }
+            Instructions::SLA(target) => {
+                let register_value = self.get_target_register(&target);
+                let result = register_value << 1;
+                self.set_flags_register(
+                    result == 0,
+                    false,
+                    register_value & 0b1 == 0b1,
+                    false,
+                );
+                self.set_target_register(target, result);
+            }
             _ => {
                 println!("Other instructions coming soon...")
             }

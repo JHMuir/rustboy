@@ -20,7 +20,7 @@ pub enum Instructions {
     DAA,
     BIT(RegisterTarget, BitPosition),   // Test to see if a specific bit of a register is set
     RESET(RegisterTarget, BitPosition), // Set a specific bit of a register to 0
-    SET(RegisterTarget),   // Set a specific bit of a register to 1
+    SET(RegisterTarget, BitPosition),   // Set a specific bit of a register to 1
     SRL(RegisterTarget),   // Bit shift a specific register right by 1
     RR(RegisterTarget),    // Bit rotate a specific register right by 1 through the carry flag
     RL(RegisterTarget),    // Bit rotate a specific register left by 1 through the carry flag
