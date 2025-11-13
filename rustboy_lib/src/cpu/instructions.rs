@@ -17,7 +17,7 @@ pub enum Instructions {
     RRCA,                  // Bit rotate A register right 
     RRLA,                  // Bit rotate A register left
     CPL,                   // Toggle every bit of A register
-    DAA,
+    DAA,                   // Decimal adjust A register
     BIT(RegisterTarget, BitPosition),   // Test to see if a specific bit of a register is set
     RESET(RegisterTarget, BitPosition), // Set a specific bit of a register to 0
     SET(RegisterTarget, BitPosition),   // Set a specific bit of a register to 1

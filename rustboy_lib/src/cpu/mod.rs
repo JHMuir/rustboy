@@ -228,6 +228,37 @@ impl CPU {
                     true);
                 self.set_target_register(RegisterTarget::A, new_value);
             }
+            Instructions::DAA => {
+                let register_value = self.get_target_register(&RegisterTarget::A);
+                let flags = self.registers.f;
+                let mut carry = false;
+                let result = if !flags.subtract {
+                    let mut result = register_value;
+                    if flags.carry || register_value > 0x99 {
+                        carry = true;
+                        result = result.wrapping_add(0x60);
+                    }
+                    if flags.half_carry || register_value & 0x0F > 0x09 {
+                        result = result.wrapping_add(0x06);
+                    }
+                    result
+                } else if flags.carry {
+                    carry = true;
+                    let add = if flags.half_carry { 0x9A } else { 0xA0 };
+                    register_value.wrapping_add(add)
+                } else if flags.half_carry {
+                    register_value.wrapping_add(0xFA)
+                } else {
+                    register_value
+                };
+                self.set_flags_register(
+                    result == 0, 
+                    self.registers.f.subtract, 
+                    carry, 
+                false
+                );
+                self.set_target_register(RegisterTarget::A, result);
+            }
             Instructions::BIT(target, bit_pos) => {
                 let register_value = self.get_target_register(&target);
                 let bit_pos: u8 = bit_pos.into();
@@ -330,9 +361,20 @@ impl CPU {
                 );
                 self.set_target_register(target, result);
             }
-            _ => {
-                println!("Other instructions coming soon...")
+            Instructions::SWAP(target) => {
+                let register_value = self.get_target_register(&target);
+                let result = ((register_value & 0xf) << 4) | ((register_value & 0xf0) >> 4);
+                self.set_flags_register(
+                    result == 0, 
+                    false, 
+                    false, 
+                false
+                );  
+                self.set_target_register(target, result);
             }
+            // _ => {
+            //     println!("Other instructions coming soon...")
+            // }
         }
 
     }
